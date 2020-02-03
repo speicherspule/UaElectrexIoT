@@ -305,8 +305,8 @@ int i = 0;
     
     while(k<(i+length_value)){
       
-      if(v==0 && length_value > 1){
-        value_int = (int)(bufferpayload[k]*256);
+      if(v==0 && length_value > 1){               //if length_value > 1
+        value_int = (int)(bufferpayload[k]*256);  //only supports 1 or 2 byte payload
         
         v++;
       }

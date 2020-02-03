@@ -6,6 +6,9 @@
  * 
  * Sends in loop a hard-coded demo frame 
  * calculate checksum and compares it to the received checksum
+ * FRAME:
+ * START BYTE | LENGTH | ID | LENGTH | VALUE | ID | lENGTH |    VALUE   | CHECKSUM
+ * 0xAA         7        27     2      0x3E7   28      1     0X00 - 0xFF      
  */
 
 //Includes
@@ -71,6 +74,7 @@ int main(int argc, char** argv) {
         PutChar(length_value);
         PutChar(value27);
         */
+        
         PutChar(id27);
         PutChar(length_value_2);
         PutChar(data[0]);
@@ -107,7 +111,7 @@ int main(int argc, char** argv) {
         while ( GetChar(&ack) != UART_SUCCESS );   //Receive ACK byte
         
         if(ack != 0xAB){       //Wrong ACK byte
-                                    //Sends again
+                                    //Sends again (not implemented)
             //LEDS to debug
              PORTCbits.RC1 = 1;     
              PORTAbits.RA3 = 0; 
