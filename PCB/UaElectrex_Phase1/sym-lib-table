@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name UaElectrex_Phase1-rescue)(type Legacy)(uri ${KIPRJMOD}/UaElectrex_Phase1-rescue.lib)(options "")(descr ""))
+)
