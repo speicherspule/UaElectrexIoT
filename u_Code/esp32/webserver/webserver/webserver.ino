@@ -4,6 +4,8 @@
 #include <SPIFFS.h>
 #include <WebSocketsServer.h>
 
+#define RXD2 16
+#define TXD2 17
 //Global variables
 unsigned char incomingByte,length_data,checksum_recv,checksum_calc = 0,id,length_value,value;
 unsigned char bufferpayload[64];
@@ -22,6 +24,47 @@ char* password = "";
 File fsUploadFile;
 WebSocketsServer webSocket = WebSocketsServer(81);
 
+// Called when receiving any WebSocket message
+void onWebSocketEvent(uint8_t num,
+                      WStype_t type,
+                      uint8_t * payload,
+                      size_t length) {
+
+  // Figure out the type of WebSocket event
+  switch(type) {
+
+    // Client has disconnected
+    case WStype_DISCONNECTED:
+      Serial.printf("[%u] Disconnected!\n", num);
+      break;
+
+    // New client has connected
+    case WStype_CONNECTED:
+      {
+        IPAddress ip = webSocket.remoteIP(num);
+        Serial.printf("[%u] Connection from ", num);
+        Serial.println(ip.toString());
+      }
+      break;
+
+    // Echo text message back to client
+    case WStype_TEXT:
+      Serial.printf("[%u] Text: %s\n", num, payload);
+      webSocket.sendTXT(num, payload);
+      break;
+
+    // For everything else: do nothing
+    case WStype_BIN:
+    case WStype_ERROR:
+    case WStype_FRAGMENT_TEXT_START:
+    case WStype_FRAGMENT_BIN_START:
+    case WStype_FRAGMENT:
+    case WStype_FRAGMENT_FIN:
+    default:
+      break;
+  }
+}
+
 void setup()
 {
   // Format the file system in case it hasn't been done before
@@ -29,8 +72,11 @@ void setup()
   
   // Start access point
   WiFi.softAP(ssid, password);
-
+   
+  
   Serial.begin(115200);
+  Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
+  
   // Print our IP address
   Serial.println();
   Serial.println("AP running");
@@ -41,16 +87,32 @@ void setup()
   server.on("/",handleIndexFile);
   
   // handle JavaScript files
-  server.on("/smoothie.js",handleJS1File);
-  server.on("/smoothie-functions.js",handleJS2File);
+  server.on("/payloadHandler.js",handleJS2File);
   server.on("/websocket.js",handleJS3File);
   server.on("/ui.js",handleJS4File);
   server.on("/gauge.js",handleJS5File);
   server.on("/gauge-functions.js",handleJS6File);
-  
+
+  //handle image files
+  server.on("/power.jpg",handleJPG1);
+  server.on("/temp.jpg",handleJPG2);
+  server.on("/refrig.jpg",handleJPG3);
+  server.on("/vrd.jpg",handleJPG4);
+  server.on("/gas.jpg",handleJPG5);
+  server.on("/water.jpg",handleJPG6);
+  server.on("/tighf.jpg",handleJPG7);
+  server.on("/liftig.jpg",handleJPG8);
+  server.on("/mma.jpg",handleJPG9);
+  server.on("/pulse.jpg",handleJPG10);
+  server.on("/2t.jpg",handleJPG11);
+  server.on("/4t.jpg",handleJPG12);
+  server.on("/spot.jpg",handleJPG13);
+  server.on("/graph.jpg",handleJPG14);
+    
   // handle CSS files
   server.on("/pure-min.css",handleCSS1file);
   server.on("/side-menu.css",handleCSS2file);
+  server.on("/grids-responsive-min.css",handleCSS3file);
   
   // list available files
   server.on("/list", HTTP_GET, handleFileList);
@@ -62,15 +124,15 @@ void setup()
   
   server.begin();
   webSocket.begin();
+  webSocket.onEvent(onWebSocketEvent);
+
 }
 
 void loop()
 {
-  
  webSocket.loop();    //websocket server handling
  server.handleClient();   //wifi server handling
  data_SM();   //UART state machine 
-    
 }
 
 
@@ -108,18 +170,13 @@ void handleIndexFile()
 }
 
 //Handle JavaScript files
-void handleJS1File()
-{
-  File js = SPIFFS.open("/smoothie.js","r");
-  server.streamFile(js, "text/javascript");
-  js.close();
-}
 void handleJS2File()
 {
-  File js = SPIFFS.open("/smoothie-functions.js","r");
+  File js = SPIFFS.open("/payloadHandler.js","r");
   server.streamFile(js, "text/javascript");
   js.close();
 }
+
 void handleJS3File()
 {
   File js = SPIFFS.open("/websocket.js","r");
@@ -147,6 +204,92 @@ void handleJS6File()
   js.close();
 }
 
+void handleJPG1()
+{
+  File jpg = SPIFFS.open("/power.jpg","r");
+  server.streamFile(jpg,"image/jpg");
+  jpg.close();
+}
+void handleJPG2()
+{
+  File jpg = SPIFFS.open("/temp.jpg","r");
+  server.streamFile(jpg,"image/jpg");
+  jpg.close();
+}
+void handleJPG3()
+{
+  File jpg = SPIFFS.open("/refrig.jpg","r");
+  server.streamFile(jpg,"image/jpg");
+  jpg.close();
+}
+void handleJPG4()
+{
+  File jpg = SPIFFS.open("/vrd.jpg","r");
+  server.streamFile(jpg,"image/jpg");
+  jpg.close();
+}
+void handleJPG5()
+{
+  File jpg = SPIFFS.open("/gas.jpg","r");
+  server.streamFile(jpg,"image/jpg");
+  jpg.close();
+}
+void handleJPG6()
+{
+  File jpg = SPIFFS.open("/water.jpg","r");
+  server.streamFile(jpg,"image/jpg");
+  jpg.close();
+}
+void handleJPG7()
+{
+  File jpg = SPIFFS.open("/tighf.jpg","r");
+  server.streamFile(jpg,"image/jpg");
+  jpg.close();
+}
+void handleJPG8()
+{
+  File jpg = SPIFFS.open("/liftig.jpg","r");
+  server.streamFile(jpg,"image/jpg");
+  jpg.close();
+}
+void handleJPG9()
+{
+  File jpg = SPIFFS.open("/mma.jpg","r");
+  server.streamFile(jpg,"image/jpg");
+  jpg.close();
+}
+void handleJPG10()
+{
+  File jpg = SPIFFS.open("/pulse.jpg","r");
+  server.streamFile(jpg,"image/jpg");
+  jpg.close();
+}
+void handleJPG11()
+{
+  File jpg = SPIFFS.open("/2t.jpg","r");
+  server.streamFile(jpg,"image/jpg");
+  jpg.close();
+}
+void handleJPG12()
+{
+  File jpg = SPIFFS.open("/4t.jpg","r");
+  server.streamFile(jpg,"image/jpg");
+  jpg.close();
+}
+
+void handleJPG13()
+{
+  File jpg = SPIFFS.open("/spot.jpg","r");
+  server.streamFile(jpg,"image/jpg");
+  jpg.close();
+}
+void handleJPG14()
+{
+  File jpg = SPIFFS.open("/graph.jpg","r");
+  server.streamFile(jpg,"image/jpg");
+  jpg.close();
+}
+
 void handleCSS1file()
 {
   File css = SPIFFS.open("/pure-min.css","r");
@@ -159,6 +302,13 @@ void handleCSS2file()
   server.streamFile(css, "text/css");
   css.close();
 }
+void handleCSS3file()
+{
+  File css = SPIFFS.open("/grids-responsive-min.css","r");
+  server.streamFile(css, "text/css");
+  css.close();
+}
+
 void handleFileList() {
   if (!server.hasArg("dir")) {
     server.send(500, "text/plain", "BAD ARGS");
@@ -204,34 +354,36 @@ bool exists(String path){
 
 
 void data_SM(void){
-
+  
   switch(data_state_s){
     
     case WaitingStartByte:    //Waits for start byte
       checksum_calc = 0;    
       
-      if (Serial.available() > 0) {   
-        incomingByte = Serial.read();
+      if (Serial2.available() > 0) {   
+        incomingByte = Serial2.read();
         if(incomingByte == 170){      //If received byte is startbyte
           data_state_s = Framelength;   //Goes to next State
+          
         }
       }
       break;
 
     case Framelength:
     
-      if (Serial.available() > 0) {
-        length_data = Serial.read();    //Stores Frame Length Value
+      if (Serial2.available() > 0) {
+        length_data = Serial2.read();    //Stores Frame Length Value
         data_state_s = Payload;         //Goes to next State
+        
       }
       
       break;
       
     case Payload:
       
-      if (Serial.available() > 0) {
+      if (Serial2.available() > 0) {
                 
-         bufferpayload[pos] = Serial.read();    //reads byte of payload to buffer
+         bufferpayload[pos] = Serial2.read();    //reads byte of payload to buffer
          
          checksum_calc += bufferpayload[pos];   //calculate checksum
          
@@ -249,14 +401,14 @@ void data_SM(void){
       break;
       
     case CheckSum:
-        if (Serial.available() > 0) {
-          checksum_recv = Serial.read();    //Receives checksum from uart       
+        if (Serial2.available() > 0) {
+          checksum_recv = Serial2.read();    //Receives checksum from uart       
         }
-
+        
        
         if(checksum_recv == checksum_calc){   //If received checksum = calculated checksum
           handlepayload();                    //Valid Payload 
-          Serial.write(0xAB);                 //Send ACK Byte
+          Serial2.write(0xAB);                 //Send ACK Byte
           
           /*  
           if(p==10){  //send 9 correct ack and 1 incorrect, just for TEST
@@ -272,7 +424,7 @@ void data_SM(void){
         }
         
         else{
-          Serial.write(0xAC);     //If received checksum != calculated checksum send wrong ACK
+          Serial2.write(0xAC);     //If received checksum != calculated checksum send wrong ACK
           data_state_s = WaitingStartByte;    //Back to waiting for inital frame
         }
         
@@ -326,7 +478,8 @@ int i = 0;
       output += ",";  
       }
   }
-    output += "}";    
+    output += "}";  
+    Serial.print(output);
     webSocket.broadcastTXT(output);   //sends through websocket
-
+  
 }

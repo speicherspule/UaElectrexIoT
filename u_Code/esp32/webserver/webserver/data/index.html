@@ -6,25 +6,101 @@
     <meta name="description" content="Descriçao">    <title>Electrex</title>    
     <link rel="stylesheet" href="pure-min.css">
     <link rel="stylesheet" href="side-menu.css">
+    <link rel="stylesheet" href="grids-responsive-min.css">
 
 
-    <script type="text/javascript" src="smoothie.js"></script>
-    <script type="text/javascript" src="smoothie-functions.js"></script>
+
+	<script type="text/javascript" src="payloadHandler.js"></script>
   	<script type="text/javascript" src="websocket.js"></script>
 
+<style>
 
+       .l-box {
+            padding: 2em;
+        }
+
+      .grids-example {
+	    background: rgb(255, 255, 255);
+	    margin: 2em auto;
+	    border-top: 1px solid #ddd;
+	    border-bottom: 1px solid #ddd;
+		}		
+	
+      .pure-g {
+	    letter-spacing: -.31em;
+	    text-rendering: optimizespeed;
+	    font-family: FreeSans,Arimo,"Droid Sans",Helvetica,Arial,sans-serif;
+	    display: -webkit-box;
+	    display: -webkit-flex;
+	    display: -ms-flexbox;
+	    display: flex;
+	    -webkit-box-orient: horizontal;
+	    -webkit-box-direction: normal;
+	    -webkit-flex-flow: row wrap;
+	    -ms-flex-flow: row wrap;
+	    flex-flow: row wrap;
+	    -webkit-align-content: flex-start;
+	    -ms-flex-line-pack: start;
+	    align-content: flex-start;
+		}
+
+		html, button, input, select, textarea, .pure-g [class *= "pure-u"] {
+	    font-family: Helvetica, Arial, sans-serif;
+	    letter-spacing: 0.01em;
+		} 
+
+		.led-box {
+		  height: 10px;
+		  width: 10px;
+		  margin: 10px;
+		  float: center;
+		}
+
+		.led-off {
+		  margin: 0 auto;
+		  width: 24px;
+		  height: 24px;
+		  background-color: #FFFFFF;
+		  border-radius: 50%;
+		  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #FFFFFF 0 -1px 9px, #FFFFFF 0 2px 12px;
+		}
+		.led-on {
+		  margin: 0 auto;
+		  width: 24px;
+		  height: 24px;
+		  background-color: #ABFF00;
+		  border-radius: 50%;
+		  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #304701 0 -1px 9px, #89FF00 0 2px 12px;
+		}
+		h2 {
+		color: #000000;
+		text-align: center;
+		}
+		label {
+		display:block;
+	    color: #000000;
+	    text-align: center;
+	    font-size: 40px
+		}
+		body{
+			color : #000000;
+		}
+
+
+    </style>
 </head>
 
-<body onload="init()">
+<body>
     
-<div id="layout">
+	 <div id="layout">
     <!-- Menu toggle -->
     <a href="#menu" id="menuLink" class="menu-link">
         <!-- Hamburger icon -->
         <span></span>
     </a>
 
-    <div id="menu">
+
+    <div id="menu" class>
         <div class="pure-menu">
             <a class="pure-menu-heading" href="#">ELECTREX</a>
 
@@ -37,45 +113,172 @@
     </div>
 
     <div id="main">
-        <div class="header">
-            <h1>Dashboard</h1>
-        </div>
-        <div class="content"> 
-            <div class="header">
-            <h1>Tension (V)</h1>
-            <br/>
-                <canvas id="chart_tension" style="width:400px; height:150px"></canvas>           
-                <canvas id="gauge_tension" width="250" height="150"></canvas>
-                <div id="text_tension" style="font-size: 20px;">
-                </div>
+    	<div class="header">
+    		<h1> Dashboard </h1>	
+    	</div>
 
+    	<div class="grids-example">
+	    	<div class="pure-g">
+	    		<div class="pure-u-lg-1-4">
+		    		<div class="l-box"> 
+		             		<table class="pure-table">
 
-            </div>
+		             			<tbody>
+						        	<td><img class = "pure-img" src = "power.jpg" alt="html5"></td>
+							        <td> <div id="IDpower" class="led-off"></div></td>
+							        </tr>
 
-            <br/>
+						        	<td><img class = "pure-img" src = "temp.jpg" alt="html5"></td>
+							        <td> <div id="IDtemp" class="led-off"></div></td>
 
-            <div class="header">
-            <h1>Current (A)</h1>    
-            <br>
-        		<canvas id="chart_current" style="width:400px; height:150px"></canvas>
-                <canvas id="gauge_current" width="250" height="150"></canvas> 
-                <div id="text_current" style="font-size: 20px;"></div>
-            </div>     
-               	
-        </div>
-    </div>
+						        	<td><img class = "pure-img" src = "gas.jpg" alt="html5"></td>
+							        <td> <div id="IDgas" class="led-off"></div></td>							        
+							        </tr>
+						        	<td><img class = "pure-img" src = "refrig.jpg" alt="html5"></td>
+							        <td> <div id="IDrefrig" class="led-off"></div></td>	
+
+						        	<td><img class = "pure-img" src = "water.jpg" alt="html5"></td>
+							        <td> <div id="IDwater" class="led-off"></div></td>
+							        </tr>	
+
+						        	<td><img class = "pure-img" src = "vrd.jpg" alt="html5"></td>
+							        <td> <div id="IDvrd" class="led-off"></div></td>
+							        </tr>								        		        				        
+							    </tbody>
+							</table>
+						</div>
+					</div>
+
+				<div class="pure-u-lg-1-4">
+			    	<div class="l-box">
+			    		
+			    		<canvas id="gauge_tension" style="width: 125%;"></canvas>
+			    		<label id="LabelTension"></label>
+			    		<h2>Tension</h2> 
+			    	</div> 
+				</div>
+            		
+	            <div class="pure-u-lg-1-4">
+	            	<div class="l-box">
+	            		 
+		                <canvas id="gauge_current" style="width: 125%;"></canvas>
+		                <label id="LabelCurrent"></label>
+		                <h2>Current</h2> 
+		            </div> 
+	            </div>
+	            </div>
+				
+				<div class="pure-g">
+		            <div class="pure-u-lg-1-5">
+		            	<div class="l-box"> 
+			                <table class="pure-table">
+						    <thead>
+						    <tbody>
+						        <tr>
+						        <td><img class = "pure-img" src = "tighf.jpg" alt="html5"> </td>
+						        <td><img class = "pure-img" src = "liftig.jpg" alt="html5"> </td>
+						        <td><img class = "pure-img" src = "mma.jpg" alt="html5"></td>
+						        <td><img class = "pure-img" src = "pulse.jpg" alt="html5"></td>
+						        </tr>
+						        <tr>
+						        <td><div id="IDtighf" class="led-off"></div></td>
+						        <td><div id="IDliftig" class="led-off"></div></td>
+						        <td><div id="IDmma" class="led-off"></div></td>
+						        <td><div id="IDpulse" class="led-off"></div></td>
+						        </tr>
+						        <tr>
+						        <td><img class = "pure-img" src = "2t.jpg" alt="html5"> </td>
+						        <td><img class = "pure-img" src = "4t.jpg" alt="html5"> </td>
+						        <td><img class = "pure-img" src = "spot.jpg" alt="html5"></td>
+						        </tr>
+						        <tr>
+						        <td><div id="ID2t" class="led-off"></div></td>
+						        <td><div id="ID4t" class="led-off"></div></td>
+						        <td><div id="IDspot" class="led-off"></div></td>
+						        </tr>					        				        
+						    </tbody>
+						</table>
+			            </div>  	
+		           	</div>
+		       
+	             <div class="pure-u-lg-1-3">
+	             		<div class="l-box"> 
+		                	<img class = "pure-img" src = "graph.jpg" alt="html5"> 
+		               </div> 
+	             </div> 
+
+		        <div class="pure-u-lg-1-3">
+		        	<div class="l-box"> 
+	             		<table class="pure-table">
+						    <thead>
+						        <tr>
+						            <th>Parameter</th>
+						            <th>Value</th>
+						        
+						        </tr>
+						    </thead>
+
+						    <tbody>
+						        <tr>
+						        <td id = "IDPar1"></td>
+						        <td id = "IDVal1"></td>
+						        </tr>
+				        		<tr>
+				        		<td id = "IDPar2"></td>
+						        <td id = "IDVal2"></td>
+				        		</tr>
+				        		<tr>
+				        		<td id = "IDPar3"></td>
+						        <td id = "IDVal3"></td>
+				        		</tr>
+				        		<tr>
+				        		<td id = "IDPar4"></td>
+						        <td id = "IDVal4"></td>
+				        		</tr>
+				        		<tr>
+				        		<td id = "IDPar5"></td>
+						        <td id = "IDVal5"></td>
+				        		</tr>
+				        		<tr>
+				        		<td id = "IDPar6"></td>
+						        <td id = "IDVal6"></td>
+				        		</tr>
+				        		<tr>
+				        		<td id = "IDPar7"></td>
+						        <td id = "IDVal7"></td>
+				        		</tr>	
+				        		<tr id = "ID_tig_table8" style="display: none"; >
+				        		<td id = "IDPar8"></td>
+						        <td id = "IDVal8"></td>
+				        		</tr>
+				        		<tr id = "ID_tig_table9" style="display: none";>
+				        		<td id = "IDPar9"></td>
+						        <td id = "IDVal9"></td>
+				        		</tr>
+				        		<tr id = "ID_tig_table10" style="display: none";>
+				        		<td id = "IDPar10"></td>
+						        <td id = "IDVal10"></td>
+				        		</tr>
+				        		<tr id = "ID_tig_table11" style="display: none";>
+				        		<td id = "IDPar11"></td>
+						        <td id = "IDVal11"></td>
+				        		</tr>				        						        					        
+						    </tbody>
+						</table>
+					</div>  
+				</div> 
+
+			</div> 
+			   
+		</div>
+	</div>
+
 </div>
 
+
 <script src="ui.js"></script>
-<script type="text/javascript" src="gauge.js"></script>
-<script type="text/javascript" src="gauge-functions.js"></script>
-<script language="javascript">
+ <script type="text/javascript" src="gauge.js"></script>
+ <script type="text/javascript" src="gauge-functions.js"></script>
 
-function init(){
-	init_smoothie();
-	init_websocket();
-}
-</script>
 </body>
-
 </html>

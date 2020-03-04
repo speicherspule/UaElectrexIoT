@@ -1,9 +1,7 @@
 var url = "ws://192.168.4.1:81/";
-
  
 // This is called when the page finishes loading
 function init_websocket() {
-    
     // Connect to WebSocket server
     wsConnect(url);
 }
@@ -23,16 +21,19 @@ function wsConnect(url) {
  
 // Called when a WebSocket connection is established with the server
 function onOpen(evt) {
+    
     // Log connection state
     console.log("Connected");
+    ledON("IDpower");
 }
  
 // Called when the WebSocket connection is closed
 function onClose(evt) {
- 
+    
     // Log disconnection state
     console.log("Disconnected");
-    
+    ledOFF("IDpower");
+
     // Try to reconnect after a few seconds
     setTimeout(function() { wsConnect(url) }, 2000);
 }
@@ -42,16 +43,8 @@ function onMessage(evt) {
     // Print out our received message
 
     var obj = JSON.parse(evt.data)
-    console.log(evt.data)
-    addValueTension(new Date().getTime(),obj["27"])
-    addValueCurrent(new Date().getTime(),obj["28"])
-    gauge_tension.set(obj["27"]); // set actual value
-    gauge_current.set(obj["28"]); // set actual value
-
-    gauge_tension.setTextField(document.getElementById("text_tension"));
-    gauge_current.setTextField(document.getElementById("text_current"));
-
-
+    handler(obj);
+    //console.log(obj)
     //console.log("Received: " + evt.data);
 
 }

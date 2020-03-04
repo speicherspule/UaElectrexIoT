@@ -32,84 +32,168 @@
  */
 void InitUart(void);
 int8_t Timer3_Init(uint16_t freq);
+void sendConfig(void);
+void sendTenCurr(void);
+void sendMMA(void);
+void sendTIG(void);
 
-int i = 0;
 unsigned char startByte = 0xAA;
-unsigned char length_frame = 7;
+unsigned char length_frame = 6;
+unsigned char length_frame_3 = 3;
+unsigned char length_frame_9 = 9;
 
+uint8_t id1 = 0x01;
+uint8_t value1 = 0x02;
+uint8_t id2 = 0x02;
+uint8_t value2 = 0x02;
+uint8_t id3 = 0x03;
+uint8_t value3 = 0x01;
 uint8_t id27 = 27;
 uint8_t id28 = 28;
 uint8_t length_value = 1;
 uint8_t length_value_2 = 2;
-uint16_t value27 = 0;
-uint16_t value28 = 255;
-uint8_t checksum,ack;
+uint16_t value27 = 143;
+uint16_t value28 = 25;
+uint8_t checksum,ack,byte_receiv;
 uint8_t data[] = {0x03,0xE7};
+
+int o=0;
+int i = 0;
+int j = 0;
 
 int main(int argc, char** argv) {
         
     TRISAbits.TRISA3 = 0; // Led 4 as output
     TRISCbits.TRISC1 = 0; // LED 5 as output
-        
+    PORTCbits.RC1 = 0;
+    PORTAbits.RA3 = 0; 
+    
     Timer3_Init(SAMPLEFREQ); //Start Timer3
     InitUart();     //Start Uart
-    int i = 0;
     
+ 
+    //sendTIG();
+    //sendMMA();
+   sendConfig();
+   sendTIG();
+   while(1){
+    //sendTIG();    
+    for (o = 0; o < 150; o++) {             
+        while(IFS0bits.T3IF==0);        // Wait for timer interrupt flag
+        IFS0bits.T3IF=0;                //Clears timer flag
+    }
+    PORTCbits.RC1 = !PORTCbits.RC1; 
+    //sendMMA();
+    sendTenCurr();
+
+    PORTCbits.RC1 = !PORTCbits.RC1; 
+    //sendTenCurr();
     
-    while(1){
-        
-        int o;
-        
-        for (o = 0; o < 2; o++) {             
-            while(IFS0bits.T3IF==0);        // Wait for timer interrupt flag
-            IFS0bits.T3IF=0;                //Clears timer flag
-        }
+    }
+}
+
+void sendConfig(void){
+     PutChar(startByte);
+     PutChar(length_frame_9);
+     PutChar(id3);
+     PutChar(length_value);
+     PutChar(value3);
+     PutChar(id1);
+     PutChar(length_value);
+     PutChar(value1);
+     PutChar(id2);
+     PutChar(length_value);
+     PutChar(value2);
+     checksum = id1+length_value+value1+id2+length_value+value2+id3+length_value+value3;
+     PutChar(checksum);
+}
+void sendTIG(void){
+
+    int m;
+    for (m = 4; m < 16; m++) {
+    PutChar(startByte);
+    PutChar(length_frame_3);    
+    PutChar(m);
+    PutChar(length_value);
+    PutChar(value1);
+    checksum = m+length_value+value1;
+    PutChar(checksum);
+    }
+
+}
+void sendMMA(void){
+
+    int m;
+    for (m = 16; m < 23; m++) {
+
+    PutChar(startByte);
+    PutChar(length_frame_3);    
+    PutChar(m);
+    PutChar(length_value);
+    PutChar(value1);
+    checksum = m+length_value+value1;
+    PutChar(checksum);
+    }
+
+}
+void sendTenCurr(void){
         
 
+
+   
         PutChar(startByte);
         PutChar(length_frame);
-        
+
         /*
-        PutChar(id27);
-        PutChar(length_value);
-        PutChar(value27);
-        */
-        
         PutChar(id27);
         PutChar(length_value_2);
         PutChar(data[0]);
         PutChar(data[1]);
+        */
+        
+        PutChar(id27);
+        PutChar(length_value);
+        PutChar(value27);
         
         PutChar(id28);
         PutChar(length_value);
         PutChar(value28);
         
-        //checksum = id27+length_value+value27+id28+length_value+value28;
-        checksum = id27+length_value_2+data[0]+data[1]+id28+length_value+value28;
+        checksum = id27+length_value+value27+id28+length_value+value28;
+        
+        //checksum = id27+length_value_2+data[0]+data[1]+id28+length_value+value28;
+        
         PutChar(checksum);
                
         if(i == 0){
             value27++;
-            value28--;
-            if(value27 == 255)
-            {
+            if(value27 == 157){
                 i=1;
             }
         }
         else{
             value27--;
-            value28++;
-            if(value27 == 0){
+            if(value27 == 143){
                 i=0;
             }
         }
         
+       if(j == 0){
+            value28++;
+            if(value28 == 27){
+                j=1;
+            }
+        }
+        else{
+            value28--;
+            if(value28 == 25){
+                j=0;
+            }
+        }
         
-        
-             
-       
         while ( GetChar(&ack) != UART_SUCCESS );   //Receive ACK byte
         
+               
         if(ack != 0xAB){       //Wrong ACK byte
                                     //Sends again (not implemented)
             //LEDS to debug
@@ -123,10 +207,7 @@ int main(int argc, char** argv) {
             PORTAbits.RA3 = 1;
             PORTCbits.RC1 = 0;
         }
-              
-        
-    }
-    return (EXIT_SUCCESS);
+         
 }
 
 void  InitUart(void){
