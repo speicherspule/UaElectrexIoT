@@ -25,6 +25,7 @@ function onOpen(evt) {
     // Log connection state
     console.log("Connected");
     ledON("IDpower");
+
 }
  
 // Called when the WebSocket connection is closed

@@ -1,2 +1,19 @@
-https://github.com/Links2004/arduinoWebSockets
+/**
+*** arduinoWebSockets
+***
+**/
+https://github.com/Links2004/arduinoWebSockets	Download it from GitHub and install it. (Sketch > Include Library > Add .ZIP Library...)
+
+/**
+*** arduino-esp32fs-plugin
+***
+**/
+
 https://github.com/me-no-dev/arduino-esp32fs-plugin
+Make sure you use one of the supported versions of Arduino IDE and have ESP32 core installed.
+Download the tool archive from releases page.
+In your Arduino sketchbook directory, create tools directory if it doesn't exist yet.
+Unpack the tool into tools directory (the path will look like <home_dir>/Arduino/tools/ESP32FS/tool/esp32fs.jar).
+Restart Arduino IDE.
+
+

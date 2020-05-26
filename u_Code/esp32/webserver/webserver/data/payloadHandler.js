@@ -76,8 +76,13 @@ var ID22 = {
 	name: "MMA Pulse Frequency",
 	unit: "Hz"
 };
+obj2 = {27: "999", 28: "999"}
 
 function handler(obj){
+	if(  JSON.stringify(obj) === JSON.stringify(obj2) ){
+		doSend(0xAC)
+	}
+	
 	Object.keys(obj).forEach(function (key){
 		switch(key){
 		case "1":
@@ -130,7 +135,7 @@ function handler(obj){
 				ledON("IDmma");
 				ledON("IDpulse");
 				table("mma");
-			}																
+			}				
 			break;
 
 		case "2":
@@ -272,7 +277,43 @@ function handler(obj){
 			document.getElementById('IDVal7').textContent = (n*0.1).toFixed(1)+" "+ID22.unit;			
 			break;
 		case "23":
-		
+			
+				if(obj["23"] == 0x00){	//soldadura inactiva
+					document.getElementById('IDgraph').src = "graph.jpg";
+				}
+				if(obj["23"] == 0x01){	//pregas
+					document.getElementById('IDgraph').src = "pregas.jpg";
+				}
+				if(obj["23"] == 0x02){	//temporizaçao de HF
+					document.getElementById('IDgraph').src = ".jpg";
+				}
+				if(obj["23"] == 0x03){	//istart
+					document.getElementById('IDgraph').src = "istart.jpg";
+				}					
+				if(obj["23"] == 0x04){	//temporizaçao de rampa de subida
+					document.getElementById('IDgraph').src = "upslope.jpg";
+				}
+				if(obj["23"] == 0x05){	//i nominal
+					document.getElementById('IDgraph').src = "ip.jpg";
+				}	
+				if(obj["23"] == 0x06){	//i nominal pulsada
+					document.getElementById('IDgraph').src = ".jpg";
+				}	
+				if(obj["23"] == 0x07){	//ibase
+					document.getElementById('IDgraph').src = "ib.jpg";
+				}	
+				if(obj["23"] == 0x08){	//temporizao de rampa de descida
+					document.getElementById('IDgraph').src = "downslope.jpg";
+				}
+				if(obj["23"] == 0x09){	//corrente final
+					document.getElementById('IDgraph').src = "ifinal.jpg";
+				}
+				if(obj["23"] == 0x0A){	//temporizaçao de post gas
+					document.getElementById('IDgraph').src = ".jpg";
+				}			
+				if(obj["23"] == 0x0B){	//espera de libertaçao de gatilho
+					document.getElementById('IDgraph').src = "postgas.jpg";
+				}	
 			break;
 		case "24":
 	
@@ -286,11 +327,11 @@ function handler(obj){
 			}
 			if(obj["15"] == 0x01){	//erro 1 Erro de alarme de temperatura 
 				ledOFF("IDrefrig");
-				ledOFF("IDtemp");
+				ledON("IDtemp");
 				ledOFF("IDvrd");
 			}
 			if(obj["15"] == 0x02){	//erro 2 Erro de alarme de falta de água
-				ledOFF("IDrefrig");
+				ledON("IDrefrig");
 				ledOFF("IDtemp");
 				ledOFF("IDvrd");
 			}
@@ -315,6 +356,10 @@ function handler(obj){
 		gauge_current.set(parseInt(obj["28"])); // set actual value
 		document.getElementById('LabelCurrent').textContent = obj["28"]+ " A";
 		break;	
+
+	default: 
+   	 	console.log('Not supported');
+    break;
 	}
 });
 }

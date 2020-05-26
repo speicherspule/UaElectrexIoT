@@ -36,6 +36,8 @@ void sendConfig(void);
 void sendTenCurr(void);
 void sendMMA(void);
 void sendTIG(void);
+void sendistart(void);
+void sendPregas(void);
 
 unsigned char startByte = 0xAA;
 unsigned char length_frame = 6;
@@ -50,6 +52,9 @@ uint8_t id3 = 0x03;
 uint8_t value3 = 0x01;
 uint8_t id27 = 27;
 uint8_t id28 = 28;
+uint8_t id23 = 23;
+uint8_t valuepregas = 0x01;
+uint8_t valueistart = 0x03;
 uint8_t length_value = 1;
 uint8_t length_value_2 = 2;
 uint16_t value27 = 143;
@@ -75,37 +80,19 @@ int main(int argc, char** argv) {
     //sendTIG();
     //sendMMA();
    sendConfig();
-   sendTIG();
+   //sendTIG();
+   
    while(1){
-    //sendTIG();    
-    for (o = 0; o < 150; o++) {             
-        while(IFS0bits.T3IF==0);        // Wait for timer interrupt flag
-        IFS0bits.T3IF=0;                //Clears timer flag
-    }
-    PORTCbits.RC1 = !PORTCbits.RC1; 
-    //sendMMA();
-    sendTenCurr();
+        //sendTIG();
+        sendPregas(); 
 
-    PORTCbits.RC1 = !PORTCbits.RC1; 
-    //sendTenCurr();
-    
+        sendTenCurr();
+
     }
 }
 
 void sendConfig(void){
-     PutChar(startByte);
-     PutChar(length_frame_9);
-     PutChar(id3);
-     PutChar(length_value);
-     PutChar(value3);
-     PutChar(id1);
-     PutChar(length_value);
-     PutChar(value1);
-     PutChar(id2);
-     PutChar(length_value);
-     PutChar(value2);
-     checksum = id1+length_value+value1+id2+length_value+value2+id3+length_value+value3;
-     PutChar(checksum);
+
 }
 void sendTIG(void){
 
@@ -137,10 +124,7 @@ void sendMMA(void){
 
 }
 void sendTenCurr(void){
-        
 
-
-   
         PutChar(startByte);
         PutChar(length_frame);
 
@@ -190,27 +174,25 @@ void sendTenCurr(void){
                 j=0;
             }
         }
-        
-        while ( GetChar(&ack) != UART_SUCCESS );   //Receive ACK byte
-        
-               
-        if(ack != 0xAB){       //Wrong ACK byte
-                                    //Sends again (not implemented)
-            //LEDS to debug
-             PORTCbits.RC1 = 1;     
-             PORTAbits.RA3 = 0; 
-             
-        }
-        else{                       //Correct ACK byte
-                                    //Sends next frame
-            //LEDS to debug
-            PORTAbits.RA3 = 1;
-            PORTCbits.RC1 = 0;
-        }
+       
          
 }
+void sendPregas(void){
+    PutChar(startByte);
+    PutChar(length_frame_3);
+    PutChar(id23);
+    PutChar(length_value);
+    PutChar(valuepregas);
+    checksum = id23+length_value+valuepregas;
+    PutChar(checksum);
+    
+    valuepregas++;
+    if(valuepregas == 12){
+        valuepregas = 0;
+    }
+}
 
-void  InitUart(void){
+void InitUart(void){
     
     // Init UART and redirect tdin/stdot/stderr to UART
     if(UartInit(PBCLOCK, 115200) != UART_SUCCESS) {
