@@ -10,8 +10,7 @@
 //Global variables
 unsigned char incomingByte, length_data, checksum_recv, checksum_calc = 0, id, length_value, value;
 unsigned char bufferpayload[128];
-int pos = 0, j = 0, k = 0, p = 0, value_int = 0, v = 0, conn = 0;
-
+int pos = 0, j = 0, k = 0, p = 0, value_int = 0, v = 0, conn = 0,ackFlag = 0,askForValues=0,receiveConfig=0;
 
 //UART StateMachine states
 typedef enum {WaitingStartByte, Framelength, Payload, CheckSum, Value} state_machine_t;
@@ -37,25 +36,31 @@ void onWebSocketEvent(uint8_t num,
   switch (type) {
 
     // Client has disconnected
-    case WStype_DISCONNECTED:
+    case WStype_DISCONNECTED:{
       Serial.printf("[%u] Disconnected!\n", num);
       conn = 0;
+    }
       break;
 
     // New client has connected
-    case WStype_CONNECTED:
-      {
+    case WStype_CONNECTED:{
+  
         IPAddress ip = webSocket.remoteIP(num);
         //Serial.printf("[%u] Connection from ", num);
         //Serial.println(ip.toString());
-        conn = 1;
-      }
-      break;
+        
+        Serial.printf("Pedi valores");
+        askConfigFiles();
+        askForValues = 1;
+        data_SM(); 
+        conn = 1; 
+    }       
+        break;
 
     // Echo text message back to client
     case WStype_TEXT:
       //Serial.printf("[%u] Text: %s\n", num, payload);
-      Serial2.write(0xAC);                 //Send ACK Byte
+      //Serial2.write(0xAC);                 //Send ACK Byte
 
       //webSocket.sendTXT(num, payload);
       break;
@@ -488,12 +493,14 @@ void data_SM(void) {
 
       if (checksum_recv == checksum_calc) { //If received checksum = calculated checksum
         handlepayload();                    //Valid Payload
-        //Serial2.write(0xAB);                 //Send ACK Byte
+        sendValidACK();
+        Serial.printf("Recebi bue bem");
         data_state_s = WaitingStartByte;
       }
 
       else {
-        //Serial2.write(0xAC);     //If received checksum != calculated checksum send wrong ACK
+        sendNotValidACK();     //If received checksum != calculated checksum send wrong ACK
+        Serial.printf("Recebi bue mal");
         data_state_s = WaitingStartByte;    //Back to waiting for inital frame
       }
 
@@ -514,10 +521,17 @@ void handlepayload(void) {
     value_int = 0;
 
     id = bufferpayload[i];
+
+    if((id >=1 && id <= 22)){
+      receiveConfig = 1;
+    }
+    
+
+    
     output += "\"";
     output += id;
     output += "\":";
-
+  
     i++;
     length_value = bufferpayload[i];
 
@@ -549,5 +563,48 @@ void handlepayload(void) {
   }
   output += "}";
 
-  webSocket.broadcastTXT(output);   //sends through websocket
+
+
+  if(receiveConfig == 1 && askForValues == 1){
+    sendValidACK();
+    receiveConfig = 0;
+    askForValues = 0;
+  }
+  
+  webSocket.broadcastTXT(output);   //sends through websocket        
+   
+  
+}
+
+void askConfigFiles(void){
+  Serial2.write(0xAA);
+  Serial2.write(0x03);
+  
+  Serial2.write(0x01);
+  Serial2.write(0x01);
+  Serial2.write(0x01);
+  
+  Serial2.write(0x03);
+}
+
+void sendValidACK(void){
+  Serial2.write(0xAA);
+  Serial2.write(0x03);
+  
+  Serial2.write(0x02);
+  Serial2.write(0x01);
+  Serial2.write(0x01);
+  
+  Serial2.write(0x04);
+}
+
+void sendNotValidACK(void){
+  Serial2.write(0xAA);
+  Serial2.write(0x03);
+  
+  Serial2.write(0x02);
+  Serial2.write(0x01);
+  Serial2.write(0x00);
+  
+  Serial2.write(0x03);
 }

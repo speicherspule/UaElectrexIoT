@@ -45,7 +45,7 @@ function onMessage(evt) {
 
     var obj = JSON.parse(evt.data)
     handler(obj);
-    //console.log(obj)
+    console.log(obj)
     //console.log("Received: " + evt.data);
 
 }
