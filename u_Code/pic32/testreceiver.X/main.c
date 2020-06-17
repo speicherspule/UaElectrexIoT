@@ -110,7 +110,7 @@ void receiveUart(void){
     case CheckSum:
         while ( GetChar(&checksum_recv) != UART_SUCCESS );
 
-        if (checksum_recv == checksum_calc) { //If received checksum = calculated checksum
+        if (checksum_recv == checksum_calc) {   //If received checksum = calculated checksum
             
             handle();                           //Valid Payload
             data_state_s = WaitingStartByte;
@@ -159,25 +159,20 @@ void handle(void){
         i = k;      
     }
     
-       if((id == 0x01) && (value_int == 0x01))      //ask for config files ID=0x01 && Value =0x01
+       if((id == 0x01) && (value_int == 0x01))      //config files request
        {
-        printf("Recebi pedido");
         askForValuesFlag = 1;
         sendConfig();  // test
-        
        }
        
-       if((id == 0x02) && (value_int == 0x00))      //ask for config files ID=0x01 && Value =0x01
+       if((id == 0x02) && (value_int == 0x00))      //receive not valid ack
        {
-           printf("Recebi not ack");
            ackFlag = 0;
        }  
         
-       if((id == 0x02) && (value_int == 0x01))      //ask for config files ID=0x01 && Value =0x01
+       if((id == 0x02) && (value_int == 0x01))      //receive valid ack
        {           
-           printf("Recebi ack %i",h);
            ackFlag = 1;
-           h++;
        }  
 
 }
