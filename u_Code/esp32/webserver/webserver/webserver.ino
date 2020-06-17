@@ -493,14 +493,13 @@ void data_SM(void) {
 
       if (checksum_recv == checksum_calc) { //If received checksum = calculated checksum
         handlepayload();                    //Valid Payload
-        sendValidACK();
-        Serial.printf("Recebi bue bem");
+ 
         data_state_s = WaitingStartByte;
       }
 
       else {
         sendNotValidACK();     //If received checksum != calculated checksum send wrong ACK
-        Serial.printf("Recebi bue mal");
+  
         data_state_s = WaitingStartByte;    //Back to waiting for inital frame
       }
 
@@ -522,8 +521,8 @@ void handlepayload(void) {
 
     id = bufferpayload[i];
 
-    if((id >=1 && id <= 22)){
-      receiveConfig = 1;
+    if((id >=1 && id <= 22)){ // checks if any of the id received 
+      receiveConfig = 1;      // was config values
     }
     
 
