@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<!--
+* CoreUI - Free Bootstrap Admin Template
+* @version v3.2.0
+* @link https://coreui.io
+* Copyright (c) 2020 creativeLabs Łukasz Holeczek
+* Licensed under MIT (https://coreui.io/license)
+-->
+<html lang="en">
+  <head>
+    <base href="./">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta name="description" content="CoreUI - Open Source Bootstrap Admin Template">
+    <meta name="author" content="Łukasz Holeczek">
+    <meta name="keyword" content="Bootstrap,Admin,Template,Open,Source,jQuery,CSS,HTML,RWD,Dashboard">
+    <title>Electrex Dashboard</title>
+    <link rel="apple-touch-icon" sizes="57x57" href="assets/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="60x60" href="assets/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="72x72" href="assets/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="76x76" href="assets/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="114x114" href="assets/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="120x120" href="assets/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="144x144" href="assets/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="152x152" href="assets/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="96x96" href="assets/favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon.ico">
+    <link rel="manifest" href="assets/favicon/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="assets/favicon/favicon.ico">
+    <meta name="theme-color" content="#ffffff">
+    <!-- Main styles for this application-->
+    <link href="css/style.css" rel="stylesheet">
+    <!--Firebase scripts-->
+    <script src="https://www.gstatic.com/firebasejs/7.16.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.16.0/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.16.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.16.0/firebase-database.js"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics-->
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-118965717-3"></script>
+
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      // Shared ID
+      gtag('config', 'UA-118965717-3');
+      // Bootstrap ID
+      gtag('config', 'UA-118965717-5');
+    </script>
+    
+  <link href="vendors/@coreui/chartjs/css/coreui-chartjs.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js"></script>
+  <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/min/moment.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@1.8.0"></script>
+  
+  </head>
+  <body class="c-app">
+    <div class="c-sidebar c-sidebar-dark c-sidebar-fixed c-sidebar-lg-show" id="sidebar">
+      <div class="c-sidebar-brand d-lg-down-none">
+        <img src="assets/brand/logoelectrex.png" class="img-fluid" alt="Responsive image">
+      </div>
+      <ul class="c-sidebar-nav">
+        
+        <li class="c-sidebar-nav-item c-sidebar-nav-dropdown"><a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle c-sidebar-show"  href="#">
+            <svg class="c-sidebar-nav-icon">
+              <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-cil-square"></use></svg>Machines</a>
+          <ul class="c-sidebar-nav-dropdown-items" id="side-menu-itens">
+            
+            <li class="c-sidebar-nav-item" style="margin-bottom: 15px;"><a class="c-sidebar-nav-link" style="margin-left: 15px;                  display: inline;"><span class="c-sidebar-nav-icon"></span>
+              Add Machine<button type="button" class="btn btn-primary float-right" onclick="addNewMachine()"><svg class="c-icon">
+                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-plus"></use></svg></button></a></li>           
+          </ul>
+        </li>
+
+
+      </ul>
+      <button class="c-sidebar-minimizer c-class-toggler" type="button" data-target="_parent" data-class="c-sidebar-minimized"></button>
+    </div>
+    <div class="c-wrapper c-fixed-components">
+      <header class="c-header c-header-light c-header-fixed c-header-with-subheader">
+        <button class="c-header-toggler c-class-toggler d-lg-none mfe-auto" type="button" data-target="#sidebar" data-class="c-sidebar-show">
+          <svg class="c-icon c-icon-lg">
+            <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-menu"></use>
+          </svg>
+        </button><a class="c-header-brand d-lg-none" href="#">
+          <img src="assets/brand/logoelectrex.png" class="img-fluid" alt="Responsive image">
+        </a>
+        <button class="c-header-toggler c-class-toggler mfs-3 d-md-down-none" type="button" data-target="#sidebar" data-class="c-sidebar-lg-show" responsive="true">
+          <svg class="c-icon c-icon-lg">
+            <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-menu"></use>
+          </svg>
+        </button>
+        <ul class="c-header-nav d-md-down-none">
+          <li class="c-header-nav-item px-3"><a class="c-header-nav-link" href="dashboard.html">Dashboard</a></li>
+        </ul>
+        
+        <ul class="c-header-nav ml-auto mr-4">  
+          <li class="c-header-nav-item dropdown">
+            <a class="c-header-nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+              <div class="c-avatar"><img class="c-avatar-img" src="assets/img/avatars/6.jpg" alt="user@email.com"></div>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right pt-0">
+              
+                <a class="dropdown-item" onclick="signOut()">
+                <svg class="c-icon mr-2">
+                  <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-account-logout"></use>
+                </svg> Logout</a>
+            </div>
+          </li>
+        </ul>
+ 
+        <div class="c-subheader px-3">
+          <!-- Breadcrumb-->
+          <ol class="breadcrumb border-0 m-0">
+            <li class="breadcrumb-item">Home</li>
+            
+            <li class="breadcrumb-item active">Dashboard</li>
+            <!-- Breadcrumb Menu-->
+          </ol>
+        </div>
+      </header>
+      <div class="c-body">
+        <main class="c-main">
+          <div class="container-fluid">
+            <div class="fade-in">
+            	<div class="row">
+                	<div class="col-sm-6 col-lg-3">
+                  		<div class="card">
+                    	<div class="card-header">
+                      	<h2>Tension</h2>
+                    	</div>
+                    	<div class="card-body">
+                      	<canvas id="gauge_tension" class="chartjs-render-monitor" style="display: block;"></canvas>
+                    	</div>
+                  		</div>
+                	</div>         	
+	                <div class="col-sm-6 col-lg-3">
+	                	<div class="card">
+		                <div class="card-header">
+		                <h2>Tension Plot</h2>
+		                </div>
+		                <div class="card-body">
+		                	<canvas id="chart_Tension"></canvas>
+		                </div>
+		               	</div>
+	              	</div>
+	                <div class="col-sm-6 col-lg-3">
+	                	<div class="card">
+		                <div class="card-header">
+		                <h2>Current</h2>
+		                </div>
+		                <div class="card-body">
+		                <canvas id="gauge_current" class="chartjs-render-monitor" style="display: block;"></canvas>
+		                </div>
+		               	</div>
+	              	</div>	      
+	                <div class="col-sm-6 col-lg-3">
+	                	<div class="card">
+		                <div class="card-header">
+		                <h2>Current Plot</h2>
+		                </div>
+		                <div class="card-body">
+		                	<canvas id="chart_Current"></canvas>
+		                </div>
+		               	</div>
+	              	</div>	 	              	        	
+            	</div>
+            	<div class="row">
+                	<div class="col-sm-6 col-lg-6">
+                    <div class="card">
+                      <div class="card-header">
+                      <h2>Changes on Configurations</h2>
+                      </div>
+                      <div class="card-body">
+                      <table id="IDTableChangeOnConfig" class="table table-responsive-sm">
+                        <thead>
+                        <tr>
+                        <th>Parameter</th>
+                        <th>Previous Value</th>
+                        <th>Current Value</th>
+                        <th>Time and Date</th>
+                        </tr>
+                        </thead>
+                        </table>
+                      </div>
+                      </div>       
+                  </div>
+                  
+	                <div class="col-sm-6 col-lg-3">
+	                	<div class="card">
+                      <div class="card-header">
+		                  <h2>Machine Current State</h2>
+		                </div>
+		                <div class="card-body">
+                      <table class="table table-responsive-sm">
+                        <thead>
+                        <tr>
+                        <th>Parameter</th>
+                        <th>Value</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                        <td>Welding Process</td>
+                        <td id="IDWeldingProcess"></td>
+                        </tr>    
+                        <tr>
+                        <td>Operating Mode</td>
+                        <td id="IDOperatingMode"></td>
+                        </tr>
+                        <tr>
+                        <td>Welding State</td>
+                        <td id="IDWeldingState"></td>
+                        </tr>
+                        <tr>
+                        <td>Cooling</td>
+                        <td id="IDCooling"></td>
+                        </tr>
+                        <tr>
+                        <td>Errors</td>
+                        <td id="IDErrors"></td>
+                        </tr>
+                        <tr>          
+                        <td>Dynamics</td>
+                        <td id="IDDynamics"></td>
+                        </tr>
+                        <tr>                                        
+                        </tbody>
+                        </table>
+		                  </div>
+		               	</div>
+                    </div>
+                    
+	              	 <div class="col-sm-6 col-lg-3">
+	                	<div class="card">
+		                <div class="card-header">
+		                <h2>Machine Detailed Configurations</h2>
+		                </div>
+		                <div class="card-body">
+                      <table id="IDTableDetailedConfig" class="table table-responsive-sm">
+                        <thead>
+                        <tr>
+                        <th>Parameter</th>
+                        <th>Value</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                        <td></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td></td>
+                        <td></td>
+                        </tr> 
+                        <tr>
+                        <td></td>
+                        <td></td>
+                        </tr>                                                                                                                                   
+                        <tr>
+                        <td></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td></td>
+                        <td></td>
+                        </tr>    
+                        <tr>
+                        <td></td>
+                        <td></td>
+                        </tr>    
+                        <tr>
+                        <td></td>
+                        <td></td>
+                        </tr>    
+                        <tr>
+                        <td></td>
+                        <td></td>
+                        </tr>    
+                        <tr>
+                        <td></td>
+                        <td></td>
+                        </tr>    
+                        <tr>
+                        <td></td>
+                        <td></td>
+                        </tr>                                                                                                                                                        
+                        </tbody>
+                        </table>
+		                </div>
+		               	</div>
+	              	</div>
+            	</div>            	
+        	</div>
+        </div>
+
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <div class="form-group">
+                    <label for="friendly-name" class="col-form-label">Friendly Name</label>
+                    <input type="text" class="form-control" id="friendly-name">
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" id="modal-button-delete" class="btn btn-danger" data-dismiss="modal">Delete Machine</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="modal-button-store" class="btn btn-primary" data-dismiss="modal">Change configurations</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        </main>
+        <footer class="c-footer">
+          <div><a href="https://coreui.io">Pedro Luzeiro</a> © 2020 Pedro Luzeiro</div>
+          <div class="ml-auto">Powered by&nbsp;<a href="https://coreui.io/">CoreUI</a></div>
+        </footer>
+
+  
+        </main>
+
+    <script>
+    function signOut(){
+      firebase.auth().signOut().then(function() {
+        // Sign-out successful.
+        window.alert("Signed Out Successfully");
+        window.location = 'index.html';
+
+      }).catch(function(error) {
+        // An error happened.
+        window.alert("Error"+error);
+
+      });  
+    }
+    </script>      
+
+    <script src="js/gauge.js"></script>
+    <script src="js/gauge-functions.js"></script>
+    <script src="js/chartfunctions.js"></script>
+    <!-- CoreUI and necessary plugins-->
+    <script src="vendors/@coreui/coreui/js/coreui.bundle.min.js"></script>
+    <!--[if IE]><!-->
+    <script src="vendors/@coreui/icons/js/svgxuse.min.js"></script>
+    <!--<![endif]-->
+    <!-- Plugins and scripts required by this view-->
+    <script src="vendors/@coreui/utils/js/coreui-utils.js"></script>
+    
+    <script src="js/database.js"></script>
+
+  </body>
+</html>
