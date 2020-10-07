@@ -1,4 +1,4 @@
-update=sex 06 mar 2020 14:59:04 WET
+update=ter 28 abr 2020 17:20:46 WEST
 version=1
 last_client=kicad
 [general]
